@@ -55,6 +55,7 @@ For example, the Gulf of Alaska experienced a heat anomaly known as the Blob fro
 Similarly, harmful algae blooms led to US\$40M loss in tourist spending along the coast of Washington in 2015 [@Smith_2023].
 Other areas highly vulnerable to heatwaves include the tropical Pacific Ocean, the Caribbean Sea, northern Australia, the Eastern China Sea and the Western Pacific Ocean [@Smith_2023].
 
+Forecasting the ecological and economic consequences of marine regime shifts is a difficult endeavor due to uncertainty.
 Increasing sea surface temperature can destabilize upwellings – currents that bring nutrient-rich water to the ocean's surface – and affect some of the world’s most productive fisheries[@Bakun2010].
 While insufficient nutrients can reduce primary productivity and cascade up through marine food webs, an excess can cause coastal eutrophication and hypoxia [@Breitburg2018], with detrimental consequences to fish stocks.
 Climate change is expected to reduce fish biomass by 3 to 22% in tropical and temperate areas by the end of the century [@Ariza2022].
@@ -64,6 +65,7 @@ However, proactive management strategies that account for these risks could help
 
 Companies and financial institutions are key actors that contribute to the extraction of marine resources, while also being affected economically by changes in marine ecosystems.
 About 35.4% of fish stocks globally are currently depleted or overexploited [@Andersen2024], with only 13 companies controlling around 16% of wild seafood capture, and just five companies responsible for 48% of farmed salmon production [@Osterblom2015; @Folke2019].
+High market concentration, a form of inequality, means that a few actors can have disproportional effects on the system for good or bad [@hamann2018].
 Fishing companies contribute to ecological degradation through harmful practices like overfishing [@Daskalov2007], destructive fishing methods [@Amoroso2018], and non-compliance with regulations [@Park2020; @Park_2023].
 By removing biomass from the ocean, fishing has historically prevented the sequestration of 21.8M tons of carbon [@Andersen2024; @mariani2020].
 In addition, the industry’s return on investment is becoming increasingly risky.
@@ -73,13 +75,13 @@ Modern fishing fleets travel twice as far but catch only one-third of what they 
 library(tidyverse)
 # load some of the datasets to report descriptive stats accurately
 dat <- readr::read_csv("~/Documents/Projects/DATA/GlobalFishWatch/9c3d6bc0-a3c1-11ed-a61d-7ba19957371b/fishing-vessels-v2.csv") # global fish watch
-load("~/Documents/Projects/Financial actos and zoonotic disease/finance_tipping/data/cleaned_data_240321.Rda")
+load("~/Documents/Projects/Financial actos and zoonotic disease/marine_tipping/data/cleaned_data_240321.Rda")
 load("~/Documents/Projects/Financial actos and zoonotic disease/finance_tipping/data/boats_owners.Rda")
 ```
 
 \begin{figure*}[ht]
 \centering
-\includegraphics[width = 6.5in, height = 2in]{fig1_marine_tipping}
+\includegraphics[width = 6.5in, height = 6.5in]{fig1_marine_tipping}
 \caption{\textbf{Areas at risk of tipping points}. We computed extreme and severe heatwave events based on historical records of sea surface temperature (A, B). Areas in colour are places where the probability is non-zero, expressed as the mean number of days spent on a heatwave event. Ocean colour data was used to compute early warning signals of critical transitions (C). Note that there are no warnings computed for higher latitudes due to missing data. For the analysis of areas prone to marine regime shifts, we kept areas where the probability of extreme and severe heatwaves is non-zero, or where at least three early warning signals were found (see Methods).} 
 \label{fig:maps}
 \end{figure*}
@@ -89,10 +91,24 @@ Financial actors – such as banks, asset managers, and pension funds – could 
 For instance, a small set of financial actors have an increasing influence over climate stability through their equity holdings in companies operating in the Amazon and boreal forests[@Galaz2018].
 Likewise, large asset managers and other financial institutions invest in companies operating in areas vulnerable to the emergence of infectious diseases [@Galaz2023].
 
+\begin{figure*}[ht]
+\centering
+\includegraphics[width = 7in, height = 7in]{break_point}
+\caption{\textbf{Abrupt changes in primary productivity}. We used the structural change and Pettitt test to investigate abrupt shifts in Chlorophyll A data and computed the proportion of change before and after the shift (the mean after over the mean before). If the proportion is one there was no change in means, if the proportion is < 1 it means an abrupt decline (e.g. 0.5 is a 50\% decline), or an increase if >1 (A). 16\% of the oceans show significant abrupt changes with the structural change test (B) while 50\% of the oceans show abrupt changes in primary productivity with the Pettitt test (C). Supplementary Figure \ref{fig:slopes} shows a similar test for linear trends in primary productivity.} 
+\label{fig:break_point}
+\end{figure*}
+
 This leaves them exposed to the impacts of their investments [@boissinot2022].
 Climate-change-driven extreme weather events are expected to cost up to USD 14 trillion annually by 2100 [@caldecott2021], directly threatening the solvency of insurers and reinsurers [@bolton2020].
 Investors and asset managers face climate exposure being at risk of stranded assets, changes in commodity prices, scarcity of resources, disruption of supply chains, and infrastructure damages [@abramskiehn2015].
 In response, financial actors are increasingly expected to disclose their risks through initiatives such as the Task Forces on Climate- and Nature-Related Financial Disclosures (TCFD and TNFD, respectively) or the EU non-financial reporting directive.
+
+\begin{figure*}[ht]
+\centering
+\includegraphics[width = 6.5in, height = 6in]{stocks_ts_zero}
+\caption{\textbf{Abrupt changes in fish biomass}. We tested abrupt changes in fish biomass data from the RAM legacy database using the Pettitt and structural change tests. We found 252 stocks having abrupt changes detected by both tests, 14 only by the structural change F statistic, 83 only by the Pettitt test, and 20 with no detection (A). The mean decline for all significant changes was 50\% of the biomass with respect to the mean before the abrupt change (B). The bottom panel lists the top territories most affected (C), the geographic areas most impacted (D), and the species with most abrupt changes. Supplementary Figure \ref{fig:fish_stocks} complements the analysis by comparing the timing of the shifts between tests and a linear test.} 
+\label{fig:stocks}
+\end{figure*}
 
 Analyses of financial exposure to biodiversity loss and ecosystem degradation are mostly focused on terrestrial ecosystems, with little research addressing ocean-related financial risks [@sanchez2022].
 Yet, fishing companies, their shareholders, and the countries they operate in are exposed to potentially irreversible changes and consequent declines in ecosystem services, with consequences on the economy, investments and livelihoods.
@@ -112,11 +128,11 @@ In this paper, we asked who are these corporate and financial actors exposed to 
 We approximated these areas as places currently under the strong influence of marine heatwaves or already showing symptoms of resilience loss.
 Frölicher et al. [-@Frolicher2018] defined heatwaves as events when sea surface temperature exceeds the 99th percentile with respect to daily satellite observations for a 30-year period.
 Hobday et al. [-@Hobday_2018] further classified heatwave categories based on the 90th percentile, where moderate heatwaves are between 1x and 2x the 90th percentile, strong heatwaves between 2x and 3x, severe heatwaves between 3x and 4x, and extreme heatwaves above 4 times the 90th percentile.
-We computed the probability of severe and extreme heat waves based on daily sea surface temperature observations from the US National Oceanic and Atmospheric Administration (NOAA) using the optimum interpolation data from 1981 to 2022 at 0.25$^\circ$ resolution (Fig \ref{fig:maps}A).
+We computed the probability of severe and extreme heat waves based on daily sea surface temperature observations from the US National Oceanic and Atmospheric Administration (NOAA) using the optimum interpolation data from 1981 to 2022 at 0.25$^\circ$ resolution (Fig \ref{fig:maps}A-B).
 While several impacts of heatwaves have been documented in ecosystems and the economy [@Smith_2023; @Hobday_2018], a recent global assessment showed no systematic effect on fish biomass [@fredston2023].
 However, heatwaves by themselves are seldom the sole cause of fish populations decline, it is often the compound effect of temperature with other pressures such as low primary productivity or low oxygen zones [@legrix2023].
 
-Thus we complemented heat waves detection with proxies stability loss in primary productivity, which are in turn driven by oxygen depletion, salinity, and the mixing of the upper layer of the ocean [@sallée2021; @Breitburg2018; @Diaz_2008].
+Thus we complemented heat waves detection with proxies of stability loss in primary productivity, which are in turn driven by oxygen depletion, salinity, and the mixing of the upper layer of the ocean [@sallée2021; @Breitburg2018; @Diaz_2008].
 We used a geographically explicit mapping of marine ecosystems showing symptoms of resilience loss [@Rocha_2022].
 Resilience is the ability of a system to withstand disturbances without losing its functions and identity [@Folke2016].
 When systems lose resilience and are close to tipping points, they leave statistical signatures in time series known as early warning signals [@Scheffer2009].
@@ -124,6 +140,15 @@ The map was produced by computing temporal autocorrelation, standard deviation, 
 The data are limited by the coverage of the ocean colour data, excluding the Arctic and Antarctic oceans[@Rocha_2022].
 For this paper we used areas with at least 3 early warnings, since two of them are suitable for bifurcation tipping (autocorrelation and standard deviation), two of them are suitable for flickering and stochastic transitions (skewness and kurtosis), and the fractal dimension is robust against heteroskedasticity.
 At least three early warnings give us the chance to pick up more robust signals of the risk of tipping taking into account different ways of reaching the transition (Fig \ref{fig:maps}).
+
+**Evidence of regime shifts:** We documented past regime shifts by reviewing scientific literature using the framework of the [regime shifts database](www.regimeshifts.org) [@biggs2018].
+In addition, we performed change point analysis, a classical method to detect regime shifts in time series [@andersen2009; @vert-pre2013].
+We looked for break points on the Chlorophyll-A concentration data from the biological pump and carbon exchange process project [@kulk2021] which offers monthly data at 9km pixel resolution, and is derived from the European Space Agency's Ocean Colour Climate Change initiative.
+We also looked at break points on historical fish stock assessment data from the RAM legacy stock assessment database version 4.44 [@ramlegacystockassessmentdatabase2024; @ricard2011], similar to previous efforts identifying regime shifts on fish stocks [@vert-pre2013].
+If there is an abrupt decline in primary productivity, one can expect that the foodweb depending on it can be prone to similar changes.
+However, linear changes in primary productivity can also generate abrupt decline on fish stocks.
+For that reason we also calculated the linear trend on Chlorophyll-A time series to show areas of the world with significant changes by using the Kendall tau statistic.
+For break point detection we used the Pettitt test of change in means [@pettitt1979], and the change point F test statistic for change on residuals [@zeileis2002].
 
 **Fishing pressure:** We identified fishing vessels operating in pixels showing a high probability of heatwaves or symptoms of resilience loss.
 We used the dataset published by Kroodsma et al. [-@Kroodsma2018] who identified \>70,000 industrial fishing vessels in the size range from 6 to 146m in length, thanks to an automatic identification system (AIS).
@@ -155,10 +180,33 @@ To test this hypothesis, we used an exponential random graph model [@Robins2007]
 \end{figure*}
 \begin{figure*}[ht]
 \centering
-\includegraphics[width = 6.5in, height = 4.5in]{fig4_network-ergm}
+\includegraphics[width = 6.5in, height = 3in]{fig4_network-ergm}
 \caption{\textbf{Network of shareholder investments} While most investments are domestic, a network of foreign investments emerge featuring European countries, China and Russia as central actors (A). Results from exponential random graph models on the World Bank governance idicators (B) reveals that investments tend to occur when differences in governance efficiency and political stability exist. Two letter codes were used to identify countries (ISO 3166-1 alpha 2 standard), for territories without a code we used numbers as follows: Curaçao: 1, Cook Islands: 2, Falkland Islands: 3, French Southern Territories: 4, Mayotte: 5, Reunion: 6, St. Pierre and Miquelon: 7, St. Helena: 8, and Azores: 9.}
 \label{fig:net}
 \end{figure*}
+
+We found that 30% of global oceans have presented extreme heat waves, and 66% severe events (Fig \ref{fig:maps}).
+Most of the extreme events are located in high latitudes in the Arctic and Antarctic oceans.
+Severe events are also common in the tropical Pacific ocean (related to ENSO), coastal California, and the Indian ocean.
+Upwelling systems in the coast of California, Benguela or Canary islands show at least three early warning signals of the proximity of instabilities.
+24% of the area analysed with early warning signals (limited to the 50$^\circ$ N-50$^\circ$ S region due to data availability) show symptoms of resilience loss[@Rocha_2022].
+The tropical north Atlantic is also a hotspot of resilience loss, a place where previous work has documented increase in summer time stratification of the water column driven by sea surface temperature and salinity [@sallée2021].
+With stronger stratification there is less mixing of water column and nutrient cycling, leading to a decline in primary productivity.
+We detect such signal in the linear decline of primary productivity (Fig \ref{fig:slopes} ).
+
+Our change point analysis shows that there has been abrupt changes in primary productivity (Fig \ref{fig:break_point}).
+The extend of the area varies depending on the statistical test used.
+The Pettitt test look for changes in means, and detects significant changes in 50% of the oceans with break points in early 2000s in the south Pacific, and more recent changes in the rest of the world.
+The structural change test is more restrictive, seeking changes on the residuals of a lagged autoregressive model.
+We find again abrupt changes in the central Pacific, the tropical Atlantic, the coasts of California, and India; adding up to 16% of the oceans.
+For the test that looks if there is a decline on Chlorophyll-A regardless if it is abrupt or smooth (the slope of a linear regression), we found that 77.3% of the ocean area (50N-50S region) has a significant kendall tau, and for 41.9% of the area primary productivity is declining (Fig \ref{fig:slopes}).
+
+Similarly, for the stock assessment data we found that 353 fish stocks show significant abrupt changes of which 271 are declining biomass while 82 are increasing (Fig \ref{fig:stocks}).
+We find agreement between the two methods used for change point detection (256 stocks), but some differences in the time predicted.
+The mean decline between the mean before and the mean after the break point is of 50% of the biomass.
+Regardless if the changes are abrupt, the Sen slope test supports the direction of change identified through the change point analysis (Fig \ref{fig:slopes}).
+The countries with more fish stocks showing abrupt changes are USA, Canada and Australia, although many occur in international waters; the fishing grounds where most abrupt changes reported are the Pacific coast, the Gulf of Alaska, central and southern Chile and the Gulf of Mexico.
+The species most impacted are herring, Atlantic cod, walley pollock, red rock lobster and pacific herring (Fig \ref{fig:stocks}).
 
 Out of the `r nrow(dat) |> format(big.interval = 3, big.mark = ",")` vessels reported in the Global Fish Watch database, we found that `r round(nrow(df_boats)/nrow(dat),2)` % of all vessels tracked (N = `r nrow(df_boats) |> format(big.interval = 3, big.mark = ",")`) fish in areas prone to marine tipping points (Fig \ref{fig:maps}).
 The bulk of these vessels do not report a flag or country of registry; however, for those who do, the largest fleets are associated to China, the United States, Japan and Norway (Fig \ref{fig:shrs}A, see Fig \ref{sm:vessels} for vessels types ).
@@ -196,6 +244,8 @@ We found that government effectiveness was the best predictor of foreign investm
 Countries with effective governments tended to invest in governments that have less effectiveness (hence the positive difference in the full model).
 We also found a smaller, yet significant and negative effect on political stability.
 Countries with low political stability in our data set invested in companies located in countries with slightly higher political stability (hence the negative difference on the full model).
+The implications of this result is that the relevant decisions to manage tipping point risk are not only on the hands of fishing vessels, the companies that own them or their shareholders.
+The countries where these activities take place (fishing and investing) can design regulations that restrain or disincentivise investments in other regions of the world where fishing activities are happening in high risk areas.
 
 Despite data incompleteness, our results show that if marine tipping points were to synchronize globally, they would impact an industry generating over 6.6 billion dollars in revenue and affect more than 100,000 jobs (Fig \ref{fig:impacts}).
 The vessel flags producing the highest revenues in our data were Ecuador, Panama, Russia, Spain and the UK, while those employing the largest workforces were led by Russia, Japan, Ecuador, Panama and Argentina (Fig \ref{fig:impacts}).
@@ -217,18 +267,23 @@ Recent studies showed that heatwaves alone are unlikely to decrease fish biomass
 Yet, it is often the effect of compound events or the interaction of multiple drivers that can drive abrupt fish declines or other marine regime shifts [@legrix2023; @Rocha2015].
 Their frequency and intensity are predicted to increase in the near future with climate change scenarios [@legrix2023; @Frolicher_2018; @Frolicher2018; @Beaugrand2019].
 In this paper, we examined which corporate and financial actors are exposed to marine tipping points by identifying vessels and companies operating in areas that are simultaneously exposed to marine heat waves and instabilities in primary productivity.
+We focused on heat waves and changes in primary productivity because of data availability, acknowledging that marine ecosystems can tip due to other causes as well [@Rocha2015].
 
 Here we reported lists of top countries, companies, and their shareholders associated with vessels fishing in areas at high risk of marine regime shifts.
 In summary, we found that fishing fleets associated with China, the US, Japan and Norway are particularly exposed.
-The shareholders of companies exposed to tipping point risks are based in Norway, China, Spain, Russia, the UK and Denmark.
+The shareholders of companies exposed to tipping point risks are based in Norway, China, Spain, Russia, the UK and Denmark.
 Spain, UK and France are home to particularly vulnerable shareholders investing in companies who fish in high-risk areas, while Russia is headquarters for fishing companies getting such investments.
 We developed a method to track vessels and companies at risk which depends on a mix of publicly available[@Kroodsma2018, @Carmine2020] and non-public datasets.
+
 Our method and findings are limited by data completeness and transparency.
+For example, corporate ownership often involves shell companies, offshore entities and indirect holdings that may not be fully documented in Orbis, or risk misidentifying or omitting ultimate owners.
+Another example is vessel flags, many vessels operate with flags of convenience obscuring the true ownership structure in the data.
+The absence of financial data at vessel level further weakens the link between company ownership and fishing activities.
 
 While transparency and accountability are values sought after by the financial sector, our analysis highlights the complexity and opacity of global fisheries, even with access to state-of-the-art data [@Kroodsma2018; @Carmine2020] and databases (e.g. Lloyds, Orbis).
 We first identified close to 17,000 vessels fishing in high-risk areas, but as we traced ownership up the chain –from vessel owner to company beneficiaries and shareholder– data availability dropped by an order of magnitude at each step.
 A high proportion of vessels have unidentified flags (`r round(df_boats |> summarize(nans = is.na(flag) |> sum() / nrow(df_boats)),2) * 100`%) and lack registered owners (`r round(df_boats |> summarize(nans = is.na(reg_owner) |> sum() / nrow(df_boats)) |> pull(nans) * 100,2)`%).
-Thus our results are biassed towards the vessels and countries that report ownership data, that is primarily publicly listed companies operating in legal fisheries.
+Thus our results are biased towards the vessels and countries that report ownership data, that is primarily publicly listed companies operating in legal fisheries.
 Further research is needed to correct this bias[@coalition2023fishy].
 Nonetheless, our study serves as a benchmark for what is achievable with current databases and is the first study to connect ocean tipping points to financial risks.
 
@@ -264,8 +319,23 @@ Governments and fishing authorities should put mechanisms in place to prevent, m
 
 # Conclusion
 
-Many environmental problems stem from how governments, cities and businesses exploit natural resources.
-We show that a variety of these actors, and their financiers, are themselves exposed to the risk of marine tipping points, which threaten the productivity of marine ecosystems.
+In this paper, we asked who are these corporate and financial actors exposed to marine tipping points?
+We first identified areas of the ocean where tipping points can manifest because they are already showing a high intensity of extreme and severe heat wave events, or they are already showing statistical signatures of resilience loss in primary productivity.
+We found that XX% of the oceans are at risk of regime shifts, and provided evidence of past regime shifts from literature reviews, and abrupt change observed in primary productivity and stock assessments data.
+16% of the oceans have shown abrupt declines in primary productivity, 42% if accounting only the linear negative trend; while 252 fish stocks resulted in abrupt declines on historical data.
+The literature already showcase past events with impacts on employment and economic lossess on the millions of dollars.
+So who is at risk today?
+
+We found that only 0.15% (16,878) of the vessels tracked in Global Fish Wash do actually fish in areas susceptible to marine regime shifts.
+We did not find the levels of market concentration found in other economic sectors such as aquaculture, in fact the ownership structure is quite sparse with most companies owned by one or two shareholders.
+Nonetheless, we find that Norway and China are important actors in hosting many of the vessels and shareholders in our data, but they are not strongly involved on foreign investment.
+Spain, the UK and France are central countries of origin for foreign investment, while Russia is a hotspot attracting these investments.
+The likelihood of these financial flows seems to be related to differences in government effectiveness and political stability.
+
+We provided lists of top shareholders and top companies with vessel ownership fishing in areas prone to marine regime shifts.
+We discussed the limitations of our study mainly related to data transparency.
+Nonetheless, we hope these lists of companies and shareholders help to identify actors with agency to manage the risk of marine regime shifts.
+We discussed potential interventions that can reduce regime shifts risks.
 Redesigning subsidy programs, lobbying company boards to fish in low-risk areas, or supporting the implementation of international agreements that take into account potential range shifts and conflicts are just a few examples of how these actors can incentivise practices that are aligned with long term sustainability values.
 
 ## Acknowledgements
@@ -288,6 +358,18 @@ Our work benefited from discussions with Robert Blasiak.
 \setcounter{figure}{0}
 \begin{figure*}[ht]
 \centering
+\includegraphics[width = 7in, height = 7in]{slopes}
+\caption{\textbf{Linear changes in primary productivity}. We estimated Kendall tau on the full time series of Chlorophyll-A at 9Km resolution. 77.3\% of the ocean shows a slope significantly different from zero, 41.9\% with a declining trend (A). In (B) the same time series have been detrended using seasonal-trend decomposition using LOESS, and a linear model fit on the residuals showing that there are still negative and significant trends in the central Pacific and Indian oceans that are not related to seasonality.} 
+\label{fig:slopes}
+\end{figure*}
+\begin{figure*}[ht]
+\centering
+\includegraphics[width = 7in, height = 3in]{fish_stocks}
+\caption{\textbf{Linear changes in fish stocks}. We first compared the timing of the break points detected with the Pettitt test and the structural change test (A). Despite both test agree on the existence of the shift, there are some differences in timing. The median decline is 50\% (red dotted line in B-C), and most shifts occurred between the 1970s and early 2000s. A comparison with the Sen slope test show that linear trends agree with the direction of change reported on the abrupt changes, the units of the slope are in biomass.} 
+\label{fig:fish_stocks}
+\end{figure*}
+\begin{figure*}[ht]
+\centering
 \includegraphics[width = 3.5in, height =2.5in]{sm_vessels}
 \caption{\textbf{Vessel types} }
 \label{sm:vessels}
@@ -300,7 +382,7 @@ Our work benefited from discussions with Robert Blasiak.
 \end{figure*}
 
 ```{r results="asis", echo = FALSE}
-load("~/Documents/Projects/Financial actos and zoonotic disease/finance_tipping/data/ergms_marine.Rda")
+load("~/Documents/Projects/Financial actos and zoonotic disease/marine_tipping/data/ergms_marine.Rda")
 stargazer::stargazer(
     df_stats2 |> 
         mutate(across(!model, round, 2)), 

@@ -95,26 +95,26 @@ out |>
 a <- out |> #ggplot(aes(mp_extreme)) + #geom_density() + scale_x_log10()
     ggplot(aes(lon,lat)) + 
     geom_tile(aes(fill = mp_extreme)) +
-    scale_fill_continuous("Mean number of days in extreme heatwaves\n [log scale]",
+    scale_fill_continuous("Mean number of days in extreme heatwaves",
         type = "viridis", trans = "log10", guide = guide_colorbar(
             barwidth = unit(4,"cm"), barheight = unit(2, "mm"), title.position = "top", title.hjust = 0.5 )
         ) + 
     coord_sf(default_crs = sf::st_crs(4326)) +
     labs(tag = "A") +
-    theme_void(base_size = 6) +
+    theme_void(base_size = 8) +
     theme(legend.position = "bottom")
 
 b <- out |> #ggplot(aes(mp_extreme)) + #geom_density() + scale_x_log10()
     ggplot(aes(lon,lat)) + 
     geom_tile(aes(fill = mp_severe)) +
     scale_fill_continuous(
-        "Mean number of days in severe heatwaves\n [log scale]",
+        "Mean number of days in severe heatwaves",
         type = "viridis", trans = "log10", guide = guide_colorbar(
             barwidth = unit(4,"cm"), barheight = unit(2, "mm"), title.position = "top", 
             title.hjust = 0.5)) + 
     coord_sf(default_crs = sf::st_crs(4326)) +
     labs(tag = "B") +
-    theme_void(base_size = 6) +
+    theme_void(base_size = 8) +
     theme(legend.position = "bottom")
 
 ## Rocha's map
@@ -137,16 +137,16 @@ c <- df_delta_detected |>
             barwidth = unit(4,"cm"), barheight = unit(2, "mm"), title.position = "top")) +
     #scale_alpha_discrete("Number of early warnings >= 3", range = c(0.5, 1)) + 
     coord_sf(default_crs = sf::st_crs(4326)) +
-    labs(tag = "C") + lims(y = c(-78.375,  89.875)) +
-    theme_void(base_size = 6) +
+    labs(tag = "C") + lims(y = c(-50,  50)) +
+    theme_void(base_size = 8) +
     theme(legend.position = "bottom")
 
 c
 
 ggsave(
-    plot = a + b + c,
-    filename = "maps_marine_tipping_240920.png", device = "png", width = 7, height = 2,
-    path = "figures/", dpi = 500, bg = "white"
+    plot = (a / b / c),
+    filename = "maps_marine_tipping_250605.png", device = "png", width = 7, height = 7,
+    path = "paper/figures/", dpi = 500, bg = "white"
 )
 
 
