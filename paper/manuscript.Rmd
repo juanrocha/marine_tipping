@@ -78,13 +78,13 @@ library(tidyverse)
 # load some of the datasets to report descriptive stats accurately
 dat <- readr::read_csv("~/Documents/Projects/DATA/GlobalFishWatch/9c3d6bc0-a3c1-11ed-a61d-7ba19957371b/fishing-vessels-v2.csv") # global fish watch
 load("~/Documents/Projects/Financial actos and zoonotic disease/marine_tipping/data/cleaned_data_240321.Rda")
-load("~/Documents/Projects/Financial actos and zoonotic disease/finance_tipping/data/boats_owners.Rda")
+load("~/Documents/Projects/Financial actos and zoonotic disease/marine_tipping/data/boats_owners.Rda")
 ```
 
 \begin{figure*}[ht]
 \centering
-\includegraphics[width = 6.5in, height = 6.5in]{fig1_marine_tipping}
-\caption{\textbf{Areas at risk of tipping points}. We computed extreme and severe heatwave events based on historical records of sea surface temperature (A, B). Areas in colour are places where the probability is non-zero, expressed as the mean number of days spent on a heatwave event. Ocean colour data was used to compute early warning signals of critical transitions (C). Note that there are no warnings computed for higher latitudes due to missing data. For the analysis of areas prone to marine regime shifts, we kept areas where the probability of extreme and severe heatwaves is non-zero, or where at least three early warning signals were found (see Methods).} 
+\includegraphics[width = 7in, height = 7in]{fig1_marine_tipping}
+\caption{\textbf{Areas at risk of tipping points}. We computed extreme and severe heatwave events based on historical records of sea surface temperature (A, B). Areas in colour are places where the probability is non-zero, expressed as the mean number of days spent on a heatwave event. Ocean colour data was used to compute early warning signals of critical transitions (C). Note that there are no warnings computed for higher latitudes due to missing data. For the analysis of areas prone to marine regime shifts, we kept areas where the probability of extreme and severe heatwaves is non-zero, or where at least three early warning signals were found (see Methods). Supplementary figure \ref{fig:rsdb} provides additional empirical evidence of the occurrence of regime shifts by mapping 1448 case studies coded through literature review.} 
 \label{fig:maps}
 \end{figure*}
 
@@ -363,6 +363,13 @@ Our work benefited from discussions with Robert Blasiak.
 \renewcommand\thetable{S\arabic{table}}
 \setcounter{table}{0}
 \setcounter{figure}{0}
+\begin{figure*}[ht]
+\centering
+\includegraphics[width = 7in, height = 3in]{rsdb_map_marine}
+\caption{\textbf{Empirical evidence of regime shifts}. Over 1440 marine regime shifts are documented on the regime shifts database, 788 cases are of hypoxia, followed by marine eutrophication (245) and fisheries collapse (181). For each dot in the map there is a paper in the scientific literature reporting regime shifts in marine ecosystems. Source: www.regimeshifts.org (beta version at www.regimeshifts.netlify.app).} 
+\label{fig:rsdb}
+\end{figure*}
+
 \begin{figure*}[ht]
 \centering
 \includegraphics[width = 7in, height = 7in]{slopes}

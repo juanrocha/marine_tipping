@@ -72,7 +72,7 @@ net2 <- network(w)
 
 ## remove nodes without stats
 ## load the wgi
-load("data/governance_index_cleaned.RData")
+load("~/Documents/Projects/Financial actos and zoonotic disease/finance_tipping/data/governance_index_cleaned.RData")
 df_wgi <- df_wgi |> 
     mutate(country_name = case_when(
         country_name == "Korea, Dem. People's Rep." ~ "Dem. People's Rep. Korea",
@@ -84,7 +84,25 @@ df_wgi <- df_wgi |>
     pivot_wider(names_from = indicator_name, values_from = estimate) |> 
     filter(country_name %in% df_stats$country)
 
+## adding GDP to the ergm by reviewer request
+df_wdi <- read_csv("~/Documents/Projects/DATA/WorldBank/WDI_csv/WDIData.csv") |> 
+    janitor::clean_names() |> 
+    select(country_name, country_code, indicator_name, `x2020`) |> 
+    filter(indicator_name == "GDP per capita, PPP (constant 2017 international $)") |> 
+    rename(`GDP per capita` = x2020) |> 
+    select(-country_code, -indicator_name) |> 
+    mutate(country_name = case_when(
+        country_name == "Korea, Dem. People's Rep." ~ "Dem. People's Rep. Korea",
+        country_name == "Korea, Rep." ~ "Korea",
+        country_name == "Russian Federation" ~ "Russia",
+        country_name == "Venezuela, RB" ~ "Venezuela",
+        TRUE ~ country_name
+    )) |> 
+    filter(country_name %in% df_stats$country)
+    
+
 c_name <- (df_wgi |> pull(country_name) |> unique())
+c_name <- (df_wdi |> pull(country_name) |> unique())
 df_stats$country[df_stats$country %in% c_name == FALSE] # 0 means all names are compatible!
 # c_name[c_name %in% nodes == FALSE]
 
@@ -102,13 +120,14 @@ inq <- inq %>%
 
 df_stats <- df_stats |> 
     left_join(df_wgi, by = c("country" = "country_name")) |> 
+    left_join(df_wdi, by = c("country" = "country_name")) |> 
     left_join(inq, by = c("iso2" = "isoa2"))
 
 df_stats |> select(country.x, country.y, `Control of Corruption`, gini_mean) |>  print(n=200) 
 
 ## reduced dataset with full stats
 df_red <- df_stats |> 
-    filter(!is.na(gini_mean), !is.na(`Control of Corruption`)) 
+    filter(!is.na(gini_mean), !is.na(`Control of Corruption`), !is.na(`GDP per capita`)) 
 
 delete_countries <- which(!df_stats$country.x %in% df_red$country.x)
 
@@ -122,7 +141,7 @@ net2 %v% "regulatory_qual" <- df_red$`Regulatory Quality`
 net2 %v% "rule_law" <- df_red$`Rule of Law`
 net2 %v% "voice_acc" <- df_red$`Voice and Accountability`
 net2 %v% "gini" <- df_red$gini_mean
-
+net2 %v% "GDP" <- df_red$`GDP per capita`
 
 ## ERGM
 ## 
@@ -134,18 +153,18 @@ tic()
 f1 <- ergm(
     net2 ~ edges + diff("corruption") + diff("gini") +
         diff("gov_effectiveness") +  diff("pol_stability") +
-        diff("regulatory_qual") + diff("rule_law") + diff("voice_acc"))
+        diff("regulatory_qual") + diff("rule_law") + diff("voice_acc") + diff("GDP"))
 toc()
 # governance + inequality
 tic()
 f2 <- ergm(
     net2 ~ edges + diff("corruption") + diff("gini") +
         diff("gov_effectiveness") +  diff("pol_stability") +
-        diff("regulatory_qual") + diff("rule_law") + diff("voice_acc") +
+        diff("regulatory_qual") + diff("rule_law") + diff("voice_acc") + diff("GDP") +
         nodeicov("corruption") + nodeicov("gov_effectiveness") +
         nodeicov("pol_stability" ) +
         nodeicov("regulatory_qual" ) + nodeicov("rule_law") +
-        nodeicov("gini"))
+        nodeicov("gini") + nodeicov("GDP"))
 toc()
 
 # g+i+structure

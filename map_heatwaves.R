@@ -3,6 +3,8 @@ library(fs)
 library(here)
 library(tictoc)
 library(patchwork)
+library(terra)
+library(stars)
 
 fls <- dir_ls("data/processed_MHW/")
 
@@ -120,7 +122,15 @@ b <- out |> #ggplot(aes(mp_extreme)) + #geom_density() + scale_x_log10()
 ## Rocha's map
 #load("~/Documents/Projects_old/ESDL_earlyadopter/ESDL/Results/210212_deltas_chlorA_log.RData") #19Mb
 load("~/Documents/Projects_old/ESDL_earlyadopter/ESDL/Results/210301_delta_detected_ChlorA_log.RData")
-
+rsdb <- read_csv("~/Documents/Projects/RSDB/assets/rsdb_clean_260626.csv")
+rsdb <- rsdb |> 
+    filter(str_detect(ecosystem_type, "Marine"), !is.na(long), !is.na(lat)) |> 
+    mutate(x = long, y = lat) |> 
+    st_as_sf(coords = c("long", "lat"), crs = 4326) |> 
+   # st_shift_longitude() |> 
+   # as.data.frame() |> 
+    rename(long = x, lat = y)
+    
 
 c <- df_delta_detected |> 
     ## transform to the same coords system manually
@@ -136,17 +146,48 @@ c <- df_delta_detected |>
         guide = guide_colorbar( 
             barwidth = unit(4,"cm"), barheight = unit(2, "mm"), title.position = "top")) +
     #scale_alpha_discrete("Number of early warnings >= 3", range = c(0.5, 1)) + 
+    geom_point(data = rsdb, color = "orange") +
     coord_sf(default_crs = sf::st_crs(4326)) +
     labs(tag = "C") + lims(y = c(-50,  50)) +
     theme_void(base_size = 8) +
     theme(legend.position = "bottom")
 
-c
+world <- ggplot(map_data("world"), aes(x = long, y = lat)) +
+    geom_polygon(aes(group = group), color = "grey65",
+                 fill = "#f9f9f9", linewidth = 0.1) +
+    #coord_map(projection = "mercator" ) #
+    coord_quickmap() 
+
+d <- world  +
+    geom_point(aes(long, lat, color = type), data = rsdb, 
+               size = 1, alpha = 0.5, show.legend = FALSE) +
+    coord_sf(default_crs = sf::st_crs(4326)) +
+    theme_void(base_size = 8) +
+    theme(legend.position = "bottom")
+
+e <- rsdb |> #select(type) |> st_drop_geometry() |> 
+    #group_by(type) |> 
+    #summarize(n = n()) |> arrange(n) |> 
+    #mutate(type = as_factor(type)) |> 
+    ggplot(aes(type,color = type, fill = type)) +
+    geom_bar(show.legend = FALSE, alpha = 0.5) + coord_flip() + 
+    labs(y = "Number of cases", x = "Regime shift type") +
+    theme_light(base_size = 8)
+
+
+d+e + plot_layout(widths = c(3,1))
+
 
 ggsave(
     plot = (a / b / c),
     filename = "maps_marine_tipping_250605.png", device = "png", width = 7, height = 7,
     path = "paper/figures/", dpi = 500, bg = "white"
+)
+
+ggsave(
+    plot = d+e + plot_layout(widths = c(4,1)),
+    filename = "rsdb_map_marine.png", device = "png", width = 8, height = 3,
+    path = "paper/figures/", dpi = 500, bg= "white"
 )
 
 

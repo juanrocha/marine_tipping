@@ -387,12 +387,14 @@ fig4 <- fits |>
         term == "diff.t-h.regulatory_qual" ~ "Difference in regulatory quality",
         term == "diff.t-h.rule_law" ~ "Difference in rule of law",
         term == "diff.t-h.voice_acc" ~ "Difference in voice accountability",
+        term == "diff.t-h.GDP" ~ "Difference in GDP (2020)",
         term == "nodeicov.corruption" ~ "Corruption",
         term == "nodeicov.gov_effectiveness" ~ "Government effectiveness",
         term == "nodeicov.pol_stability" ~ "Political stability",
         term == "nodeicov.regulatory_qual" ~"Regulatory quality",
         term == "nodeicov.rule_law" ~ "Rule of law",
-        term == "nodeicov.gini" ~ "Inequality (Gini)")) |> 
+        term == "nodeicov.gini" ~ "Inequality (Gini)",
+        term == "nodeicov.GDP" ~ "GDP per capita (2020)")) |> 
     mutate(model = as_factor(model)) |> 
     mutate(term = fct_relevel(term, "Edges")) |>
     mutate(term = fct_rev(term)) |> 
