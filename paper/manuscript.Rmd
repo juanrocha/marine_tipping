@@ -29,7 +29,6 @@ urlcolor: blue
 header-includes:
 - \usepackage{dcolumn, rotating, longtable, float, array, tabularx, inputenc}
 - \usepackage[switch]{lineno}
-# - \setmainfont{Arial}
 - \renewcommand{\abstractname}{}
 - \graphicspath{{figures/}}
 - \usepackage[margin=2.5cm]{geometry}
@@ -213,7 +212,7 @@ Regardless if the changes are abrupt, the Sen slope test supports the direction 
 The countries with more fish stocks showing abrupt changes are USA, Canada and Australia, although many occur in international waters; the fishing grounds where most abrupt changes reported are the Pacific coast, the Gulf of Alaska, central and southern Chile and the Gulf of Mexico.
 The species most impacted are herring, Atlantic cod, walley pollock, red rock lobster and pacific herring (Fig \ref{fig:stocks}).
 
-Out of the `r nrow(dat) |> format(big.interval = 3, big.mark = ",")` vessels reported in the Global Fish Watch database, we found that `r round(nrow(df_boats)/nrow(dat),2)` % of all vessels tracked (N = `r nrow(df_boats) |> format(big.interval = 3, big.mark = ",")`) fish in areas prone to marine tipping points (Fig \ref{fig:maps}).
+Out of the `r nrow(dat) |> format(big.interval = 3, big.mark = ",")` vessels reported in the Global Fish Watch database, we found that `r round(nrow(df_boats)/nrow(dat),2) * 100` % of all vessels tracked (N = `r nrow(df_boats) |> format(big.interval = 3, big.mark = ",")`) fish in areas prone to marine tipping points (Fig \ref{fig:maps}).
 The bulk of these vessels do not report a flag or country of registry; however, for those who do, the largest fleets are associated to China, the United States, Japan and Norway (Fig \ref{fig:shrs}A, see Fig \ref{sm:vessels} for vessels types ).
 China's fleet is at least three times larger than the next larger fleet, making it a dominant actor.
 Out of the `r nrow(df_boats) |> format(big.interval = 3, big.mark = ",")` vessels, we identified `r guos |> pull(company) |> unique() |> length() |> format(big.interval = 3, big.mark = ",")` companies, for `r shrs |> pull(company) |> unique() |> length() |> format(big.interval = 3, big.mark = ",")` of them we identified `r  shrs |> pull(name) |> unique() |> length() |> format(big.interval = 3, big.mark = ",")` unique shareholders and `r nrow(shrs) |> format(big.interval = 3, big.mark = ",")` ownership relationships between shareholders and companies.
@@ -304,7 +303,6 @@ In fact, over 500 observed hypoxic and anoxic zones –a regime shift that impac
 Despite these limitations, our study offers key insights for managing the financial risks associated with marine tipping points.
 In contrast to previous work that identified keystone actors dominating the exploitation of natural resources [@Galaz2018; @Galaz2023; @Folke2019], we found that the fisheries sector does not seem to be highly concentrated, at least not at the level of decision-making that is exposed to risk of regime shifts -- where to go fishing and when.
 Market concentration probably occurs further down the supply chain, at the level of intermediaries [@jouffray2019], but this level of aggregation makes it harder for financial institutions and regulators to discriminate whether the fish traded comes from areas prone to tipping points.
-An important area of further research is the question of discount rates for the actors that make the decision of when and where to fish, as well as higher levels in the supply chain.
 
 Financial actors and corporations are increasingly required to report their climate and nature-related risks, as seen in initiatives like the Task Force on Climate-Related Disclosures (TCFD), or the European Corporate Reporting Directive (CSRD).
 Central to these reporting efforts is the concept of double materiality: companies need to assess what is their vulnerability to ecological or climate change; but also how their activities impact climate change or ecological degradation [@bebbington2024].
@@ -333,7 +331,7 @@ We found that about 30% of the oceans are at risk of regime shifts (extreme mari
 The literature already showcase past events with impacts on employment and economic losses on the millions of dollars.
 So who is at risk today?
 
-We found that only 0.15% (16,878) of the vessels tracked in Global Fishing Watch do actually fish in areas susceptible to marine regime shifts.
+We found that 15% (16,878) of the vessels tracked in Global Fishing Watch do actually fish in areas susceptible to marine regime shifts.
 We did not find the levels of market concentration found in other economic sectors such as aquaculture, in fact the ownership structure is quite sparse with most companies owned by one or two shareholders.
 Nonetheless, we find that Norway and China are important actors in hosting many of the vessels and shareholders in our data, but they are not strongly involved on foreign investment.
 Spain, the UK and France are central countries of origin for foreign investment, while Russia is a hotspot attracting these investments.
@@ -347,7 +345,7 @@ Redesigning subsidy programs, lobbying company boards to fish in low-risk areas,
 
 ## Acknowledgements
 
-This work has been supported by the project Networks of Financial Rupture funded by FORMAS grant 2020-00198; and the Finance to Revive Biodiversity (FinBio) program, financed by Mistra – the Swedish Foundation for Strategic Environmental Research (DIA 2020/10).
+This work has been supported by the project Networks of Financial Rupture funded by FORMAS grant 2020-00198; and the Finance to Revive Biodiversity (FinBio) program, financed by Mistra – the Swedish Foundation for Strategic Environmental Research (DIA 2020/10), and the Swedish Research Council (VR grant 2022-04122).
 Our work benefited from discussions with Robert Blasiak.
 
 # References {.unnumbered}
@@ -369,7 +367,6 @@ Our work benefited from discussions with Robert Blasiak.
 \caption{\textbf{Empirical evidence of regime shifts}. Over 1440 marine regime shifts are documented on the regime shifts database, 788 cases are of hypoxia, followed by marine eutrophication (245) and fisheries collapse (181). For each dot in the map there is a paper in the scientific literature reporting regime shifts in marine ecosystems. Source: www.regimeshifts.org (beta version at www.regimeshifts.netlify.app).} 
 \label{fig:rsdb}
 \end{figure*}
-
 \begin{figure*}[ht]
 \centering
 \includegraphics[width = 7in, height = 7in]{slopes}
