@@ -12,7 +12,7 @@ df_boats
 
 ## Initialize remote driver
 d <- rsDriver(
-    port = 4445L, browser = "firefox") # should open a chrome
+    port = 4567L, browser = "firefox", phantomver = NULL) # should open a chrome
 remDr <- d[["client"]]
 #remDr$open()
 tic()
