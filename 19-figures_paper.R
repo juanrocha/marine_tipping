@@ -133,6 +133,7 @@ aa <- df_boats |>
     group_by(reg_owner, flag) |> 
     add_tally(name = "boats") |> ungroup() |> 
     select(flag, reg_owner, boats) |> unique() |> 
+    group_by(boats) |> summarize(number_companies = n())
     slice_max(boats, n = 25) |>
     # make pretty labels
     mutate(reg_owner = str_remove_all(reg_owner, pattern = "Company|Limited|Proprietary"),

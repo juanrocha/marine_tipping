@@ -133,3 +133,32 @@ save(df_boats, file = "data/boats.Rda")
 #     filter(risk == TRUE) |> 
 #     pull(mmsi) |> 
 #     unique()
+
+
+#### Reviewers requests ####
+a <- dat |> filter(!is.na(flag_gfw)) |> 
+    group_by(flag_gfw) |> 
+    summarize(n = n()) |> 
+    arrange(n) |> 
+    mutate(flag_gfw = as_factor(flag_gfw)) |> 
+    filter(n > 100) |> 
+    ggplot(aes(n, flag_gfw)) + geom_col() + scale_x_log10() +
+    labs(x = "Number of vessels [log 10]", y = "Flag countries from Global Fish Watch") +
+    theme_light(base_size = 6)
+a
+
+b <- dat |> 
+    group_by(vessel_class_gfw) |> 
+    summarize(n = n()) |> 
+    arrange(n) |> 
+    mutate(vessel_class_gfw = str_to_sentence(vessel_class_gfw) |>
+               str_replace_all("_", " ") |> as_factor()) |> 
+    ggplot(aes(n, vessel_class_gfw)) + geom_col() +
+    labs(x = "Number of vessels", y = "Vessel type")+
+    theme_light(base_size = 6)
+    
+ggsave(
+    plot = (a+b), path = "paper/figures/", file = "vessel_flags.png", 
+    device = "png",
+    width = 7, height = 3, dpi = 400, bg = "white"
+)

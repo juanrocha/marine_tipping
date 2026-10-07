@@ -6,11 +6,13 @@ library(patchwork)
 #download_ramlegacy()
 ram_dir()
 
-dat <- load_ramlegacy(tables = c("metadata", "tbbest.data", "area", "stock"))
+dat <- load_ramlegacy(tables = c("metadata", "tbbest.data", "area", "stock", "r.data", "f.data"))
 dat$metadata |> as_tibble()
 dat$stock |> as_tibble()
 dat$area |> as_tibble() |>  pull(areacode) |> unique()
 dat$tbbest.data |> as.data.frame() |> rownames_to_column("year") |> as_tibble()
+dat$r.data |> as_tibble()
+
 
 ## only use data / stocks for which there are long time series: at least 25yrs data
 stock_25 <- dat$tbbest.data |> 
@@ -99,6 +101,7 @@ b <- out |>
     geom_point(aes(colour = p_values), alpha = 0.6, stroke = 0) +
     geom_hline(yintercept = c(1, 0.5), linetype = 2, color = c("black", "red"), linewidth = 0.1) +
     scale_color_manual("P values < 0.05",values = c("orange", "purple", "blue", "grey30")) +
+    #scale_y_log10()+
     #geom_text(aes(label = ifelse(prop_change>4, stock, NA)) )
     labs(x = "Break point with Pettitt's test", y = "Proportion of change in stock biomass", tag = "B") +
     theme_light(base_size = 7) + 
@@ -108,8 +111,9 @@ c <- out |>
     ggplot(aes(sen_slope, prop_change)) +
     geom_point(aes(color = sen_pval < 0.05), alpha = 0.6, stroke = 0) +
     geom_hline(yintercept = c(1, 0.5), linetype = 2, color = c("black", "red"), linewidth = 0.1) +
-    geom_vline(xintercept = 1, linetype = 2, color = "black", linewidth = 0.1) +
+    geom_vline(xintercept = 0, linetype = 2, color = "black", linewidth = 0.1) +
     scale_color_manual("Sen slope",values = c("grey30", "orange"), labels = c("p > 0.05", "p < 0.05")) +
+    #scale_y_log10()+
     labs(x = "Sen slope", y = "Proportion of change in stock biomass", tag = "C") +
     theme_light(base_size = 7) +
     theme(legend.position = c(0.2,0.75), legend.position.inside = TRUE, legend.background = element_blank()) 
@@ -117,7 +121,8 @@ c <- out |>
 cor(out$pettitt_point, out$struct_point)
 
 ggsave(
-    plot = (a+b+c), path = "img/", file = "fish_stocks.png", device = "png",
+    plot = (a+b+c), path = "paper/figures/", file = "fish_mortality.png", 
+    device = "png",
     width = 7, height = 3, dpi = 400, bg = "white"
 )
 
@@ -153,7 +158,7 @@ out |> summarize(
 # 271 stocks significanly increased, 82 decreased.
 out |> filter(sen_pval < 0.05) |> 
     summarise(n = sum(sen_slope < 0))
-
+out
 
 b <- out |> 
     filter(p_values != "none") |> 
@@ -229,3 +234,129 @@ ggsave(
     path = "img/", file = "stocks_ts_zero.png", device = "png", bg="white",
     width = 7, height = 6, plot = last_plot(), dpi = 400
 )    
+
+
+#### reviewer requests ####
+## only use data / stocks for which there are long time series: at least 25yrs data
+stock_25_recruitment <- dat$r.data |> 
+    map_df(.f = function(x) sum(!is.na(x))) |> 
+    pivot_longer(cols = 1:last_col(), names_to = "stock", values_to = "obs") |> #summarize(med = median(obs))
+    #ggplot(aes(obs)) + geom_density() + geom_vline(aes(xintercept = median(obs)))
+    filter(obs >= 25) |> 
+    pull(stock)
+
+stock_25_mortality <- dat$f.data |> # fishing mortality 
+    map_df(.f = function(x) sum(!is.na(x))) |> 
+    pivot_longer(cols = 1:last_col(), names_to = "stock", values_to = "obs") |> #summarize(med = median(obs))
+    #ggplot(aes(obs)) + geom_density() + geom_vline(aes(xintercept = median(obs)))
+    filter(obs >= 25) |> 
+    pull(stock)
+
+
+# reduce dataset to stocks with at least 25 years of obs
+dat$r.data <- dat$r.data |> 
+    select(all_of(stock_25_recruitment)) 
+
+# reduce dataset to stocks with at least 25 years of obs
+dat$f.data <- dat$f.data |> 
+    select(all_of(stock_25_mortality)) 
+
+#### Break points ####: Run the function chunk to load it
+# You need to calculate the year vector for each dataset since they are different.
+years <- dat$r.data |> 
+    as.data.frame() |> 
+    rownames_to_column("year") |> 
+    as_tibble() |> pull(year) |> 
+    as.numeric()
+
+## compute break points for recruitment
+out_rec <- list()
+tic()
+out_rec <- map(
+    .x = dat$r.data,
+    .f = safely(break_point),
+    .progress = TRUE
+)
+toc() # 2.2s
+
+## Now for fish mortality
+years <- dat$f.data |> 
+    as.data.frame() |> 
+    rownames_to_column("year") |> 
+    as_tibble() |> pull(year) |> 
+    as.numeric()
+
+out_mor <- list()
+tic()
+out_mor <- map(
+    .x = dat$f.data,
+    .f = safely(break_point),
+    .progress = TRUE
+)
+toc() #12s
+
+## rename the output as out, and re-run the lines to create the figures
+
+out <- out_rec
+stock_25 <- stock_25_recruitment
+
+
+out <- out_mor
+stock_25 <- stock_25_mortality
+
+
+out <- transpose(out)
+out$error |> map_lgl(is.null) |> all() # all good!
+out <- out$result |> bind_rows() |> 
+    mutate(stock = stock_25)
+
+out <- out |> 
+    mutate(p_values = case_when(
+        pettitt_pval <= 0.05 & Fstat_pval <= 0.05  ~ "both",
+        pettitt_pval <= 0.05 & Fstat_pval > 0.05 ~ "Pettitt",
+        pettitt_pval > 0.05 & Fstat_pval <= 0.05 ~ "Fstat",
+        pettitt_pval > 0.05 & Fstat_pval > 0.05 ~ "none",
+        .default = "none"
+    ) |> as_factor())  |> 
+    mutate(prop_change = m2/m1) 
+
+a <- out |> 
+    ggplot(aes(pettitt_point, struct_point)) +
+    geom_point(aes(color = p_values), alpha = 0.6, stroke = 0) +
+    geom_abline(slope = 1, intercept = 0, color = "grey50", linewidth = 0.1) +
+    scale_color_manual("P values < 0.05",values = c("orange", "purple", "blue", "grey30")) +
+    labs(x = "Break point with Pettitt's test", y = "Break point with structural change test", tag = "A") +
+    theme_light(base_size = 7) + 
+    theme(legend.position = c(0.2,0.75), legend.position.inside = TRUE, legend.background = element_blank()) 
+
+b <- out |> 
+    ggplot(aes(pettitt_point, prop_change)) +
+    geom_point(aes(colour = p_values), alpha = 0.6, stroke = 0) +
+    geom_hline(yintercept = c(1), linetype = 2, color = c("black"), linewidth = 0.1) +
+    scale_color_manual("P values < 0.05",values = c("orange", "purple", "blue", "grey30")) +
+    #scale_y_log10()+
+    #geom_text(aes(label = ifelse(prop_change>4, stock, NA)) )
+    labs(x = "Break point with Pettitt's test", y = "Proportion of change in recruitment", tag = "B") +
+    theme_light(base_size = 7) + 
+    theme(legend.position = c(0.2,0.75), legend.position.inside = TRUE, legend.background = element_blank()) 
+
+c <- out |> 
+    ggplot(aes(sen_slope, prop_change)) +
+    geom_point(aes(color = sen_pval < 0.05), alpha = 0.6, stroke = 0) +
+    geom_hline(yintercept = c(1), linetype = 2, color = c("black"), linewidth = 0.1) +
+    geom_vline(xintercept = 0, linetype = 2, color = "black", linewidth = 0.1) +
+    scale_color_manual("Sen slope",values = c("grey30", "orange"), labels = c("p > 0.05", "p < 0.05")) +
+    #lims(x = c(-1e9, 1e9)) +
+    labs(x = "Sen slope", y = "Proportion of change in recruitment", tag = "C") +
+    theme_light(base_size = 7) +
+    theme(legend.position = c(0.2,0.75), legend.position.inside = TRUE, legend.background = element_blank()) 
+
+cor(out$pettitt_point, out$struct_point)
+(a+b+c)
+
+
+ggsave(
+    plot = (a+b+c), path = "paper/figures/", file = "fish_recruitment.png", 
+    device = "png",
+    width = 7, height = 3, dpi = 400, bg = "white"
+)
